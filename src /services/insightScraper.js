@@ -4,6 +4,21 @@ const { JSDOM } = jsdom;
 const axios = require('axios');
 const LOGGER = require('log4js').getLogger();
 
+/**
+ * @typedef {Object} InsightReferenceContent
+ * @property {number} paragraphNumber
+ * @property {string} paragraphContent
+ */
+
+
+/**
+ * @typedef {Object} InsightReference
+ * @property {string} title
+ * @property {Array<InsightReferenceContent>} content
+ */
+
+
+// move to dedicated client module
 async function fetchData(url) {
     const response = await axios(url).catch((err) => console.log(err));
     
@@ -28,6 +43,28 @@ const buildNameToLinkObject = ( domSelector, rootUrl) => {
     return nameToLinkObjectList;
 }
 
+/**
+ * 
+ * @param { NodeListOf<Element>} contentSelector 
+ * @returns InsightReference
+ */
+const buildInsightReference = (contentSelector) => {
+    const insightReference = {
+        title : contentSelector[0].textContent,
+        content: []
+    }
+    for (let i = 1; i < contentSelector.length; i++) {
+        const currentContent = contentSelector[i];
+        const contentText = currentContent.textContent;
+        if (contentText)
+        insightReference.content.push({
+            paragraphNumber: i,
+            paragraphContent: contentText
+        })
+    }
+    return insightReference;
+}
+
 function genCharArray(charA, charZ) {
     let a = [], i = charA.charCodeAt(0), j = charZ.charCodeAt(0);
     for (; i <= j; ++i) {
@@ -36,7 +73,12 @@ function genCharArray(charA, charZ) {
     return a;
 }
 
-// TODO: Check to see if this is any different with other languages
+// TODO: Check to see if this is any different with other languages.
+// TODO: The selector below should be dynamic 
+/**
+ * 
+ * @returns Promise<[[]]>
+ */
 const scrapeInsight = async () => {
     const rootUrl = 'https://wol.jw.org'
     const baseUrl = `${rootUrl}/en/wol/library/r1/lp-e/all-publications/insight/`;
@@ -50,11 +92,33 @@ const scrapeInsight = async () => {
         return buildNameToLinkObject(selector, rootUrl)
     })
     return Promise.all(allNamesAndLinks).then(resolvedList => {
-        const lastPage = resolvedList[resolvedList.length - 1];
-        const lastItem = lastPage[lastPage.length - 1]
         return resolvedList;
-    })
-   
+    })  
 }
 
-module.exports = scrapeInsight
+
+
+const scrapeInsightReference = async (referenceURL) => {
+    try {
+        const referenceRequest = await fetchData(referenceURL);
+        const referenceHTML = referenceRequest.data
+        const referenceDOM = new JSDOM(referenceHTML);
+        const contentSelector = referenceDOM.window.document.querySelectorAll('[data-pid]');
+        const insightReference = buildInsightReference(contentSelector);
+        return insightReference;
+    } catch(err) {
+        console.log(err);
+        return "Error fetching content"
+    }
+}
+const flatInsight = async () => {
+    const insightReferenceByPages = await scrapeInsight();
+    return insightReferenceByPages.flat()
+}
+// scrapeInsightReference("https://wol.jw.org/en/wol/d/r1/lp-e/1200000005");
+
+module.exports = {
+    scrapeInsight: scrapeInsight,
+    flatInsight: flatInsight,
+    getInsightReferenceContent: scrapeInsightReference
+}

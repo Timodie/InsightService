@@ -1,3 +1,5 @@
+require('dotenv').config()
+console.log(process.env.REDIS_HOST)
 const express = require('express');
 const server = require('http');
 const app = express();
@@ -5,8 +7,10 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const LOGGER = require('log4js').getLogger();
 const routes = require('./routes/v1/routes');
+const redisClient = require('./services/redisClient');
 LOGGER.level = "debug";
-const port = 3007 
+const port = 3007;
+console.log(process.env.REDIS_HOST)
 
 app.use(bodyParser.json({limit: '50mb'}));
 app.use('/api/v1', routes);
@@ -21,7 +25,8 @@ app.get('/hello', (req, res)=>{
     res.send("hi");
 })
 
-// app.use('api/v1', routes);
+
+
 
 const httpServer = server.createServer(app);
 const listener = httpServer.listen(port, (err) => {
