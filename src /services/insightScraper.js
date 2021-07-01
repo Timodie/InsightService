@@ -107,7 +107,7 @@ const scrapeInsightReference = async (referenceURL) => {
         const insightReference = buildInsightReference(contentSelector);
         return insightReference;
     } catch(err) {
-        console.log(err);
+        LOGGER.error(err);
         return "Error fetching content"
     }
 }
@@ -115,7 +115,6 @@ const flatInsight = async () => {
     const insightReferenceByPages = await scrapeInsight();
     return insightReferenceByPages.flat()
 }
-// scrapeInsightReference("https://wol.jw.org/en/wol/d/r1/lp-e/1200000005");
 
 module.exports = {
     scrapeInsight: scrapeInsight,

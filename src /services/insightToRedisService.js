@@ -1,6 +1,7 @@
 const redisClient = require('./redisClient');
 const insightScraper = require('./insightScraper');
 const { flatInsight } = insightScraper;
+const LOGGER = require('log4js').getLogger();
 
 const persistInsightToRedis = async() => {
    
@@ -9,14 +10,14 @@ const persistInsightToRedis = async() => {
         const { name, link } = insightRef;
         const lowerName  = name.toLowerCase()
         await redisClient.setAsync(lowerName, link);
-        console.log("successfully persisted", name)
+        LOGGER.info("successfully persisted", name)
     })
     return await getAllRedisKeys()
 }
 
 const getLinkForReference = async(reference) => {
     const link = await redisClient.getAsync(reference);
-    console.log(`from redis for ${reference}`,link);
+    LOGGER.info(`from redis for ${reference}`,link);
     return link;
 }
 
@@ -27,7 +28,7 @@ const getLinkForReference = async(reference) => {
 const getAllRedisKeys = async() => {
    try {
        const keys =  await redisClient.keysAsync('*');
-       console.log(keys)
+       LOGGER.log(keys)
        return keys;
    } catch(err) {
         console.log(err);
