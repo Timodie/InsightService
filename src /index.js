@@ -25,12 +25,6 @@ app.get('/hello', (req, res) => {
   res.send('hi');
 });
 
-const httpServer = server.createServer(app);
-const listener = httpServer.listen(port, (err) => {
-  if (err) {
-    LOGGER.error(err);
-  }
-  LOGGER.info(`Server started on ${port}`);
-});
+
 
 module.exports = app;
