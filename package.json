@@ -8,7 +8,7 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "start": "node app.js",
+    "start": "nodemon app.js",
     "migration": "nodemon migration.js",
     "prepare": "husky install",
     "test": "echo \"Error: no test specified\""
