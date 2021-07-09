@@ -8,7 +8,7 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "start": "node src/index.js",
+    "start": "nodemon app.js",
     "migration": "nodemon migration.js",
     "prepare": "husky install",
     "test": "echo \"Error: no test specified\""
@@ -19,7 +19,7 @@
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "dotenv": "^9.0.0",
-    "express": "^4.16.4",
+    "express": "^4.17.1",
     "firebase-admin": "^9.7.0",
     "http": "^0.0.1-security",
     "ioredis": "^4.27.6",
