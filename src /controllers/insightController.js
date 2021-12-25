@@ -3,6 +3,7 @@ const insightToRedisService = require('../services/insightToRedisService');
 const { scrapeInsight, flatInsight, getInsightReferenceContent } =
   insightScraper;
 const express = require('express');
+const { cleanInsightContent } = require('../utils/insightSanitizer')
 const LOGGER = require('log4js').getLogger();
 LOGGER.level = 'debug';
 
@@ -108,6 +109,7 @@ const getInsightContent = async (request, response) => {
       reference,
     );
     const referenceContent = await getInsightReferenceContent(referenceLink);
+    cleanInsightContent(referenceContent)
     response.status(200).send(referenceContent);
   } catch (err) {
     response.status(400).send(err);
