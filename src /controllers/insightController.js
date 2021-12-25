@@ -3,6 +3,7 @@ const insightToRedisService = require('../services/insightToRedisService');
 const { scrapeInsight, flatInsight, getInsightReferenceContent } =
   insightScraper;
 const express = require('express');
+const { cleanInsightContent } = require('../utils/insightSanitizer')
 const LOGGER = require('log4js').getLogger();
 LOGGER.level = 'debug';
 
@@ -77,6 +78,14 @@ const getReferenceForInsightName = async (request, response) => {
   }
 };
 
+const getUniqueKeys = (allReferences = []) => {
+  const uniqueRefs = new Set()
+  allReferences.forEach(reference => {
+    uniqueRefs.add(reference.toLowerCase())
+  });
+  return Array.from(uniqueRefs);
+}
+
 /**
  *
  * @param {express.Request} request
@@ -85,7 +94,8 @@ const getReferenceForInsightName = async (request, response) => {
 const getAllInsightReferences = async (request, response) => {
   try {
     const allReferences = await insightToRedisService.getAllRedisKeys();
-    response.status(200).send(allReferences);
+    const uniqueRefs = getUniqueKeys(allReferences)
+    response.status(200).send(uniqueRefs);
   } catch (err) {
     console.log(err);
     response.status(500).send(err);
@@ -99,6 +109,7 @@ const getInsightContent = async (request, response) => {
       reference,
     );
     const referenceContent = await getInsightReferenceContent(referenceLink);
+    cleanInsightContent(referenceContent)
     response.status(200).send(referenceContent);
   } catch (err) {
     response.status(400).send(err);
