@@ -13,7 +13,7 @@ It caches the link of each reference in Redis and exposes it as a service.
 ### How To Run
 * Clone the repo
 * Ensure the `.env` file exists in the root directory
-* `npm install   
+* `npm install  ` 
 * Populate your redis cache by running `npm run migration`
 * Run the server : `npm start`
 
