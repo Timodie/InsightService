@@ -21,6 +21,24 @@ const getLinkForReference = async (reference) => {
 };
 
 /**
+ * 
+ * @returns Promise<{name: string, link: string }>
+ */
+const getRandomReference = async()=> {
+ return new Promise(async ( resolve, reject) => {
+  await redisClient.sendCommand('RANDOMKEY', async(err, result) => {
+  if (result) {
+     const link = await getLinkForReference(result);
+    resolve({ name: result, link })
+  } else {
+    reject(err)
+  }
+ })
+ }) 
+ 
+}
+
+/**
  *
  * @return {Promise<string[]>}
  */
@@ -38,4 +56,5 @@ module.exports = {
   getAllRedisKeys: getAllRedisKeys,
   persistInightToRedis: persistInsightToRedis,
   getLinkForReference: getLinkForReference,
+  getRandomReference: getRandomReference
 };

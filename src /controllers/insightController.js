@@ -116,6 +116,17 @@ const getInsightContent = async (request, response) => {
   }
 };
 
+const getRandomInsightReference = async(request, response) => {
+  try {
+   const reference = await insightToRedisService.getRandomReference();
+   const referenceContent = await getInsightReferenceContent(reference.link);
+   cleanInsightContent(referenceContent)
+   response.status(200).send(referenceContent);
+  } catch (err) {
+    response.status(500).send(err)
+  }
+}
+
 const mySampleGET = (req, res) => {
   res.status(200).send('Hello there');
 };
@@ -127,4 +138,5 @@ module.exports = {
   getFlatInsight: getFlatInsight,
   getAllInsightReferences: getAllInsightReferences,
   getInsightContent: getInsightContent,
+  getRandomInsightReference: getRandomInsightReference
 };

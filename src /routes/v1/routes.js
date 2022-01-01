@@ -8,4 +8,5 @@ router.get(`/getReference`, insightController.getReferenceForInsightName);
 router.get(`/getFlatInsight`, insightController.getFlatInsight);
 router.get(`/allInsightRefs`, insightController.getAllInsightReferences);
 router.get(`/insightContent`, insightController.getInsightContent);
+router.get(`/randomReference`, insightController.getRandomInsightReference)
 module.exports = router;
