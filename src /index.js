@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const LOGGER = require('log4js').getLogger();
 const routes = require('./routes/v1/routes');
+const hookRoutes = require('./routes/v1/hookRoutes')
 const redisClient = require('./services/redisClient');
 LOGGER.level = 'debug';
 const port = 3007;
@@ -14,6 +15,7 @@ console.log(process.env.REDIS_HOST);
 
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use('/api/v1', routes);
+app.use('/api/v1', hookRoutes)
 
 app.use(cors());
 
